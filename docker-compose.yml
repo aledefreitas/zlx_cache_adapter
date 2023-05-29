@@ -1,0 +1,17 @@
+#v3 Syntax
+version: '3.6'
+
+services:
+  zlx_cache_adapter_cache:
+    image: eqalpha/keydb
+    ports:
+      - '6379:6379'
+
+  zlx_cache_adapter_app:
+    build:
+      context: .
+      dockerfile: ./.docker/Dockerfile
+    volumes:
+      - .:/app
+    environment:
+      - "REDIS_HOST=zlx_cache_adapter_cache"

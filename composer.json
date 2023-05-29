@@ -1,0 +1,26 @@
+{
+    "name": "aledefreitas/zlx_cache_adapter",
+    "description": "Wrapper for Illuminate's Cache class with Lock Aware Cache Management and support for Stale data",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Aledefreitas\\ZlxCacheAdapter\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Alexandre Caetano"
+        }
+    ],
+    "require": {
+        "illuminate/cache": "^10.12",
+        "illuminate/redis": "^10.12",
+        "illuminate/support": "^10.12",
+        "illuminate/container": "^10.12",
+        "phpoption/phpoption": "^1.9",
+        "vlucas/phpdotenv": "^5.5",
+        "laravel/helpers": "^1.6",
+        "larapack/dd": "^1.1"
+    }
+}
