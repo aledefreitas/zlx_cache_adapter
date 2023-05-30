@@ -33,12 +33,12 @@ class Cache
 
             foreach ($configs['instances'] as $instance => $config) {
                 $connections[$instance] = [
-                    'url' => $config['url'] ?? env('REDIS_URL', null),
-                    'host' => $config['host'] ?? env('REDIS_HOST', '127.0.0.1'),
-                    'socket' => $config['socket'] ?? env('REDIS_SOCKET', null),
-                    'password' => $config['password'] ?? env('REDIS_PASSWORD', null),
-                    'port' => $config['port'] ?? env('REDIS_PORT', '6379'),
-                    'database' => $config['database'] ?? env('REDIS_CACHE_DB', '1'),
+                    'url' => $config['url'] ?? null,
+                    'host' => $config['host'] ?? null,
+                    'socket' => $config['socket'] ?? null,
+                    'password' => $config['password'] ?? null,
+                    'port' => $config['port'] ?? null,
+                    'database' => $config['database'] ?? 0,
                     'prefix' => $config['prefix'] ?? '',
                 ];
 
