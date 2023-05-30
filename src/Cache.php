@@ -35,7 +35,8 @@ class Cache
                 $connections[$instance] = [
                     'url' => $config['url'] ?? null,
                     'host' => $config['host'] ?? null,
-                    'socket' => $config['socket'] ?? null,
+                    'path' => $config['socket'] ?? null,
+                    'scheme' => isset($config['socket']) and !empty($config['socket']) ? 'unix' : 'tcp',
                     'password' => $config['password'] ?? null,
                     'port' => $config['port'] ?? null,
                     'database' => $config['database'] ?? 0,
