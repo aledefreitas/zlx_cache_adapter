@@ -32,16 +32,24 @@ class Cache
             $stores = [];
 
             foreach ($configs['instances'] as $instance => $config) {
-                $connections[$instance] = [
-                    'url' => $config['url'] ?? null,
-                    'host' => $config['host'] ?? null,
-                    'path' => $config['socket'] ?? null,
-                    'scheme' => isset($config['socket']) and !empty($config['socket']) ? 'unix' : 'tcp',
-                    'password' => $config['password'] ?? null,
-                    'port' => $config['port'] ?? null,
-                    'database' => $config['database'] ?? 0,
-                    'prefix' => $config['prefix'] ?? '',
-                ];
+                if (isset($config['socket'])) {
+                    $connections[$instance] = [
+                        'host' => $config['socket'],
+                        'password' => $config['password'] ?? null,
+                        'database' => $config['database'] ?? 0,
+                        'prefix' => $config['prefix'] ?? '',
+                    ];
+                } else {
+                    $connections[$instance] = [
+                        'url' => $config['url'] ?? null,
+                        'host' => $config['host'] ?? null,
+                        'password' => $config['password'] ?? null,
+                        'scheme' => null,
+                        'port' => $config['port'] ?? null,
+                        'database' => $config['database'] ?? 0,
+                        'prefix' => $config['prefix'] ?? '',
+                    ];
+                }
 
                 $stores["cache.stores.{$instance}"] = [
                     'driver' => 'staleRedis',
@@ -69,15 +77,13 @@ class Cache
                 'cache.stores.array' => [
                     'driver' => 'array',
                 ],
-                ... $stores,
+                ...$stores,
             ];
         });
-
 
         $cacheManager = new CacheManager($app);
 
         self::$instances['array_instance'] = $cacheManager->driver('array');
-
         foreach ($configs['instances'] as $instanceName => $config) {
             self::$instances[$instanceName] = $cacheManager->driver($instanceName);
         }
@@ -114,7 +120,7 @@ class Cache
             self::instance($instance);
     }
 
-	/**
+    /**
      * @param  string  $key
      * @param  mixed  $value
      * @param  string  $instance
@@ -131,7 +137,7 @@ class Cache
         return $instance->put($key, $value, 3600);
     }
 
-	/**
+    /**
      * @param  string  $key
      * @param  string  $instance
      * @param  bool  $use_stale
@@ -156,7 +162,7 @@ class Cache
         return false;
     }
 
-	/**
+    /**
      * @param  bool  $ignore_prevents
      * @param  string  $instance
      *
@@ -169,7 +175,7 @@ class Cache
         return self::instance($instance)->flush();
     }
 
-	/**
+    /**
      * @param  string  $key
      * @param  \Closure  $callable
      * @param  string  $instance
@@ -192,7 +198,7 @@ class Cache
         );
     }
 
-	/**
+    /**
      * @param  string  $key
      * @param  mixed  $value
      * @param  string  $instance
@@ -226,7 +232,7 @@ class Cache
         return $instance->forget($key);
     }
 
-	/**
+    /**
      * @param  string  $group
      * @param  string  $instance
      *
@@ -234,6 +240,6 @@ class Cache
      */
     public static function clearGroup(string $group, string $instance = 'default')
     {
-        return self::instance($instance)->tags([ $group ])->flush();
+        return self::instance($instance)->tags([$group])->flush();
     }
 }
