@@ -35,6 +35,7 @@ class Cache
                 if (isset($config['socket'])) {
                     $connections[$instance] = [
                         'host' => $config['socket'],
+                        'port' => null,
                         'password' => $config['password'] ?? null,
                         'database' => $config['database'] ?? 0,
                         'prefix' => $config['prefix'] ?? '',
@@ -124,15 +125,21 @@ class Cache
      * @param  string  $key
      * @param  mixed  $value
      * @param  string  $instance
+     * @param  bool  $useStale
      *
      * @return void
      */
     public static function set(
         string $key,
         $value,
-        string $instance = 'default'
+        string $instance = 'default',
+        bool $useStale = true
     ) {
         $instance = self::getCacheTagByKey($key, $instance);
+
+        if ($useStale === true) {
+            $instance->putStale($key, $value, 3600 * 2);
+        }
 
         return $instance->put($key, $value, 3600);
     }
@@ -140,14 +147,14 @@ class Cache
     /**
      * @param  string  $key
      * @param  string  $instance
-     * @param  bool  $use_stale
+     * @param  bool  $useStale
      *
      * @return mixed
      */
     public static function get(
         string $key,
         string $instance = 'default',
-        bool $use_stale = true
+        bool $useStale = true
     ) {
         $instance = self::getCacheTagByKey($key, $instance);
 
@@ -155,7 +162,7 @@ class Cache
             return $data;
         }
 
-        if ($use_stale === true && $stale = $instance->getStale($key)) {
+        if ($useStale === true && $stale = $instance->getStale($key)) {
             return $stale;
         }
 
@@ -179,7 +186,7 @@ class Cache
      * @param  string  $key
      * @param  \Closure  $callable
      * @param  string  $instance
-     * @param  bool  $use_stale
+     * @param  bool  $useStale
      *
      * @return mixed
      */
@@ -187,7 +194,7 @@ class Cache
         string $key,
         \Closure $callable,
         string $instance = 'default',
-        bool $use_stale = true
+        bool $useStale = true
     ) {
         $instance = self::getCacheTagByKey($key, $instance);
 

@@ -20,11 +20,24 @@ trait CreatesStaleCacheTrait
      */
     public function put($key, $value, $ttl = null)
     {
+        return parent::put($key, $value, $ttl);
+    }
+
+    /**
+     * Store an item in the cache.
+     *
+     * @param  string  $key
+     * @param  mixed  $value
+     * @param  \DateTimeInterface|\DateInterval|int|null  $ttl
+     * @return bool
+     */
+    public function putStale($key, $value, $ttl = null)
+    {
         if (!Str::endsWith($key, self::REFERENCE_STALE_KEY)) {
-            parent::tags('stale')->put($key . self::REFERENCE_STALE_KEY, $value, !is_null($ttl) ? $this->getSeconds($ttl) * 2 : $this->getDefaultCacheTime() * 2);
+            return parent::tags('stale')->put($key . self::REFERENCE_STALE_KEY, $value, !is_null($ttl) ? $this->getSeconds($ttl) : $this->getDefaultCacheTime());
         }
 
-        return parent::put($key, $value, $ttl);
+        return false;
     }
 
     /**
