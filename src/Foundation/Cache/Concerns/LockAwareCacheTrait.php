@@ -41,6 +41,14 @@ trait LockAwareCacheTrait
 
         try {
             $lock = $this->store->tags('locks')->lock($key . '::lock_key', 3);
+
+            if (!$lock->get()) {
+                $value = $this->getStale($key);
+                if (!is_null($value) and $value !== false) {
+                    return $value;
+                }
+            }
+
             $lock->betweenBlockedAttemptsSleepFor(500);
 
             $lock->block(3);
