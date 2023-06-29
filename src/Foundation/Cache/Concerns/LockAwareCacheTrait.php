@@ -45,6 +45,8 @@ trait LockAwareCacheTrait
             if (!$lock->get()) {
                 $value = $this->getStale($key);
                 if (!is_null($value) and $value !== false) {
+                    $lock->release();
+
                     return $value;
                 }
 
