@@ -47,11 +47,12 @@ trait LockAwareCacheTrait
                 if (!is_null($value) and $value !== false) {
                     return $value;
                 }
+
+                $lock->betweenBlockedAttemptsSleepFor(500);
+
+                $lock->block(3);
             }
 
-            $lock->betweenBlockedAttemptsSleepFor(500);
-
-            $lock->block(3);
             $value = $this->get($key);
 
             if (is_null($value) or $value === false) {
