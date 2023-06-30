@@ -60,6 +60,7 @@ trait LockAwareCacheTrait
             if (is_null($value) or $value === false) {
                 $value = call_user_func($callback);
                 $this->put($key, $value, $ttl);
+                $this->putStale($key, $value, $ttl * 2);
             }
         } catch (LockTimeoutException $e) {
             $value = false;
@@ -73,6 +74,7 @@ trait LockAwareCacheTrait
             if (is_null($value) or $value === false) {
                 $value = call_user_func($callback);
                 $this->put($key, $value, $ttl);
+                $this->putStale($key, $value, $ttl * 2);
             }
         }
 
